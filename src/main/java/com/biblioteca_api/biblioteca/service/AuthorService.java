@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.biblioteca_api.biblioteca.dto.AuthorRequestDTO;
+import com.biblioteca_api.biblioteca.dto.AuthorResponseDTO;
 import com.biblioteca_api.biblioteca.entities.Author;
 import com.biblioteca_api.biblioteca.repository.AuthorRepository;
 
@@ -19,44 +20,52 @@ public class AuthorService {
 
     private final AuthorRepository authorRepository;
 
-    // PEGA O AUTOR PELO ID
-    public Author getAuthorById(Long id) {
+    public Author findAuthorEntity(Long id) {
         return authorRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Autor não encontrado"));
+    }
 
+    // PEGA O AUTOR PELO ID
+    public AuthorResponseDTO getAuthorById(Long id) {
+        Author author = findAuthorEntity(id);
+        return AuthorResponseDTO.fromEntity(author);
     }
 
     // BUSCA TODOS OS AUTORES
-    public List<Author> getAllAuthors() {
-        return authorRepository.findAll();
+    public List<AuthorResponseDTO> getAllAuthors() {
+        return authorRepository.findAll()
+                .stream()
+                .map(AuthorResponseDTO::fromEntity)
+                .toList();
     }
 
     // DELETE AUTOR PELO ID
     @Transactional
     public void deleteAuthorById(Long id) {
-        getAuthorById(id);
-        authorRepository.deleteById(id);
+        Author author = findAuthorEntity(id);
+        authorRepository.delete(author);
     }
 
     // CRIA UM AUTOR
-
     @Transactional
-    public Author createAuthor(AuthorRequestDTO dto) {
+    public AuthorResponseDTO createAuthor(AuthorRequestDTO dto) {
         Author author = new Author();
         author.setName(dto.name());
         author.setBirthdate(dto.birthDate());
 
-        return authorRepository.save(author);
+        Author savedAuthor = authorRepository.save(author);
+        return AuthorResponseDTO.fromEntity(savedAuthor);
     }
 
     // EDITA UM AUTOR COMPLETAMENTE
     @Transactional
-    public Author editAuthor(AuthorRequestDTO data, Long id) {
-        Author author = getAuthorById(id);
+    public AuthorResponseDTO editAuthor(AuthorRequestDTO data, Long id) {
+        Author author = findAuthorEntity(id);
 
         author.setBirthdate(data.birthDate());
         author.setName(data.name());
 
-        return authorRepository.save(author);
+        Author updatedAuthor = authorRepository.save(author);
+        return AuthorResponseDTO.fromEntity(updatedAuthor);
     }
 }

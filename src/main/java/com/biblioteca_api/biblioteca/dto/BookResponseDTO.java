@@ -1,21 +1,18 @@
 package com.biblioteca_api.biblioteca.dto;
 
 import com.biblioteca_api.biblioteca.entities.Book;
-
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
 public record BookResponseDTO(
-
         Long id,
         String title,
         String isbn,
         BigDecimal price,
         LocalDate publishedDate,
         Long authorId,
-        String authorName
-
-) {
+        String authorName,
+        Double averageRating) {
     public BookResponseDTO(Book book) {
         this(
                 book.getId(),
@@ -24,6 +21,11 @@ public record BookResponseDTO(
                 book.getPrice(),
                 book.getPublishedDate(),
                 book.getAuthor().getId(),
-                book.getAuthor().getName());
+                book.getAuthor().getName(),
+                book.getAverageRating());
+    }
+
+    public static BookResponseDTO fromEntity(Book book) {
+        return new BookResponseDTO(book);
     }
 }

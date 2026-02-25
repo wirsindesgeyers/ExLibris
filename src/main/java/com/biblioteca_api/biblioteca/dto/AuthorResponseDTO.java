@@ -24,6 +24,9 @@ public record AuthorResponseDTO(
                         : List.of());
     }
 
+    public static AuthorResponseDTO fromEntity(Author author) {
+        return new AuthorResponseDTO(author);
+    }
 }
 
 record BookInfoDTO(Long id, String title, LocalDate publishedDate) {

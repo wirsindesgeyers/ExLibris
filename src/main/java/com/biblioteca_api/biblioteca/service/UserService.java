@@ -1,5 +1,7 @@
 package com.biblioteca_api.biblioteca.service;
 
+import java.util.List;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -30,6 +32,13 @@ public class UserService {
     public UserResponseDTO getUserById(Long id) {
         User user = findUserEntity(id);
         return UserResponseDTO.fromEntity(user);
+    }
+
+    public List<UserResponseDTO> getAllUsers() {
+        return userRepository.findAll()
+                .stream()
+                .map(UserResponseDTO::fromEntity)
+                .toList();
     }
 
 }

@@ -9,7 +9,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.biblioteca_api.biblioteca.dto.ReviewResponseDTO;
+import com.biblioteca_api.biblioteca.dto.UserResponseDTO;
 import com.biblioteca_api.biblioteca.service.ReviewService;
+import com.biblioteca_api.biblioteca.service.UserService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
@@ -20,13 +22,22 @@ import lombok.RequiredArgsConstructor;
 public class UserController {
 
     private final ReviewService reviewService;
+    private final UserService userService;
 
     @Operation(summary = "Retorna todas as reviews de um usuário")
-    @GetMapping("/{userId}")
+    @GetMapping("/{userId}/reviews")
     public ResponseEntity<List<ReviewResponseDTO>> listAllReviews(@PathVariable Long userId) {
         List<ReviewResponseDTO> responseDTO = reviewService.listReviewsFromUser(userId);
 
         return ResponseEntity.ok(responseDTO);
+    }
+
+    @Operation(summary = "Retorna todos os usuários")
+    @GetMapping
+    public ResponseEntity<List<UserResponseDTO>> listAllUsers() {
+        List<UserResponseDTO> response = userService.getAllUsers();
+
+        return ResponseEntity.ok(response);
     }
 
 }

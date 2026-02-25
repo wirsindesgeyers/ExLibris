@@ -106,6 +106,10 @@ The API is fully documented using Swagger/OpenAPI. Once the application is runni
 | Method | Endpoint | Description |
 | --- | --- | --- |
 | `POST` | `/api/author` | Register a new author |
+| `GET` | `/api/author/{id}` | Retrieve an author by ID |
+| `PUT` | `/api/author/{id}` | Update author details |
+| `DELETE` | `/api/author/{id}` | Remove an author |
+| `GET` | `/api/author` | Retrieve all authors |
 
 ### 👤 Reviews (Roadmap)
 
@@ -124,21 +128,14 @@ The project follows a clean architecture pattern with separated concerns:
 src/main/java/com/biblioteca_api/biblioteca/
 ├── BibliotecaApplication.java      # Application entry point
 ├── controller/                     # REST Controllers (API Layer)
-│   ├── BookController.java
-│   └── AuthorController.java
+│   
 ├── service/                        # Business Logic Layer
 ├── repository/                     # Data Access Layer (Spring Data JPA)
 ├── entities/                       # JPA Entities (Database Models)
-│   ├── Book.java
-│   ├── Author.java
-│   ├── User.java
-│   └── Loan.java
+│   
 ├── dto/                            # Data Transfer Objects
-│   ├── BookRequestDTO.java
-│   └── AuthorResponseDTO.java
+│
 └── infra/                          # Infrastructure & Configs
-    ├── GlobalExceptionHandler.java
-    └── exceptions/
 
 ```
 

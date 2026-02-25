@@ -107,4 +107,11 @@ public class BookService {
 
         return BookResponseDTO.fromEntity(updatedBook);
     }
+
+    @Transactional
+    public void updateAverageRating(Long bookId, Double newAverage) {
+        Book book = findBookEntity(bookId);
+        book.setAverageRating(newAverage != null ? newAverage : 0.0);
+        bookRepository.save(book);
+    }
 }

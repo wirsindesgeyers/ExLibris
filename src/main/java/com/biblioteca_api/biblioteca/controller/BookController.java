@@ -54,6 +54,7 @@ public class BookController {
     @Operation(summary = "Edita um livro (por completo)")
     @PutMapping("/{id}")
     public ResponseEntity<BookResponseDTO> editBook(@RequestBody @Valid BookRequestDTO dto, @PathVariable Long id) {
+
         return ResponseEntity.ok(bookService.updateBook(id, dto));
     }
 

@@ -1,6 +1,7 @@
 package com.biblioteca_api.biblioteca.entities;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.PastOrPresent;
 import lombok.AllArgsConstructor;
@@ -48,4 +49,8 @@ public class Book {
     @OneToMany(mappedBy = "book", cascade = CascadeType.ALL)
     private List<Review> reviews;
 
+    @Min(0)
+    @Max(5)
+    @Column(name = "average_rating")
+    private Double averageRating = 0.0;
 }

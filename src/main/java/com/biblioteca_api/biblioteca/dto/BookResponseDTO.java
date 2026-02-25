@@ -11,7 +11,8 @@ public record BookResponseDTO(
         BigDecimal price,
         LocalDate publishedDate,
         Long authorId,
-        String authorName) {
+        String authorName,
+        Double averageRating) {
     public BookResponseDTO(Book book) {
         this(
                 book.getId(),
@@ -20,7 +21,8 @@ public record BookResponseDTO(
                 book.getPrice(),
                 book.getPublishedDate(),
                 book.getAuthor().getId(),
-                book.getAuthor().getName());
+                book.getAuthor().getName(),
+                book.getAverageRating());
     }
 
     public static BookResponseDTO fromEntity(Book book) {

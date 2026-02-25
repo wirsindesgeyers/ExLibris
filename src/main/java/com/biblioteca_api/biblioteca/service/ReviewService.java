@@ -24,6 +24,12 @@ public class ReviewService {
     private final BookService bookService;
     private final UserService userService;
 
+    // RECALCULATES THE BOOK RATING
+    private void recalculateBookRating(Long bookId) {
+        Double average = reviewRepository.getAverageRatingByBookId(bookId);
+        bookService.updateAverageRating(bookId, average);
+    }
+
     // RETrieveS THE REVIEW ENTITY
     private Review findReviewEntity(Long id) {
         return reviewRepository.findById(id)
@@ -56,6 +62,8 @@ public class ReviewService {
         review.setRating(dto.rating());
 
         Review savedReview = reviewRepository.save(review);
+        recalculateBookRating(bookId);
+
         return ReviewResponseDTO.fromEntity(savedReview);
     }
 
@@ -64,6 +72,8 @@ public class ReviewService {
     public void deleteReview(Long id) {
         Review review = findReviewEntity(id);
         reviewRepository.delete(review);
+
+        recalculateBookRating(id);
     }
 
     // UPDATE A REVIEW
@@ -80,7 +90,10 @@ public class ReviewService {
         review.setRating(dto.rating());
 
         Review updatedReview = reviewRepository.save(review);
+        recalculateBookRating(bookId);
+
         return ReviewResponseDTO.fromEntity(updatedReview);
+
     }
 
     // RETRIEVES ALL REVIEWS FROM A SPECIFIC BOOK

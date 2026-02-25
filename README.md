@@ -111,14 +111,14 @@ The API is fully documented using Swagger/OpenAPI. Once the application is runni
 | `DELETE` | `/api/author/{id}` | Remove an author |
 | `GET` | `/api/author` | Retrieve all authors |
 
-### 👤 Reviews (Roadmap)
+### 👤 Reviews
 
 | Method | Endpoint | Description |
 | --- | --- | --- |
 | `POST` | `/api/books/{id}/reviews` | Add a review and rating |
-| `GET` | `/api/books/{id}/reviews` | Get reviews for a book |
-
-*(Full list of endpoints available in Swagger UI)*
+| `GET` | `/api/books/{bookId}/reviews` | Get reviews for a book |
+| `GET` | `/api/users/{userId}/reviews` | Get all book reviews from an user |
+| `DELETE` | `/api/reviews/{reviewId}` | Delete a review |
 
 ## 🏗️ Project Structure
 

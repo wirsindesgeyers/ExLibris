@@ -16,6 +16,12 @@ public class UserService {
 
     private final UserRepository userRepository;
 
+    protected void ValidateUserExists(Long id) {
+        if (!userRepository.existsById(id)) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuário não encontrado");
+        }
+    }
+
     public User findUserEntity(Long id) {
         return userRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuário não encontrado"));
@@ -25,4 +31,5 @@ public class UserService {
         User user = findUserEntity(id);
         return UserResponseDTO.fromEntity(user);
     }
+
 }

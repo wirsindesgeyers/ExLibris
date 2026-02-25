@@ -79,4 +79,14 @@ public class BookController {
 
         return ResponseEntity.ok(reviewService.createReview(data, bookId, userId));
     }
+
+    @Operation(summary = "Lista as reviews de um livro")
+    @GetMapping("/{bookId}/reviews")
+    public ResponseEntity<List<ReviewResponseDTO>> listBookReviews(@PathVariable Long bookId) {
+        List<ReviewResponseDTO> response = reviewService.listReviewsFromBook(bookId);
+
+        return ResponseEntity.ok(response);
+
+    }
+
 }

@@ -116,13 +116,4 @@ public class BookController {
 
     }
 
-    // (DELETE) - DELETA A SUA PRÓPRIA REVIEW DE UM LIVRO
-    @Operation(summary = "Deletar a sua própria review de um livro")
-    @DeleteMapping("/reviews/{reviewId}")
-    public ResponseEntity<Void> deleteOwnReview(@PathVariable Long reviewId) {
-
-        reviewService.deleteReview(reviewId);
-
-        return ResponseEntity.noContent().build();
-    }
 }

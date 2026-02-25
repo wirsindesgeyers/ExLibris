@@ -1,4 +1,4 @@
-package com.biblioteca_api.biblioteca.controller;
+package com.biblioteca_api.biblioteca.dto;
 
 import java.time.LocalDate;
 

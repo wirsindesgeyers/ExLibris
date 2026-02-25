@@ -13,12 +13,16 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import com.biblioteca_api.biblioteca.dto.BookRequestDTO;
 import com.biblioteca_api.biblioteca.dto.BookResponseDTO;
+import com.biblioteca_api.biblioteca.dto.ReviewRequestDTO;
 import com.biblioteca_api.biblioteca.entities.Book;
+import com.biblioteca_api.biblioteca.entities.Review;
 import com.biblioteca_api.biblioteca.service.BookService;
+import com.biblioteca_api.biblioteca.service.ReviewService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
@@ -30,6 +34,7 @@ import lombok.RequiredArgsConstructor;
 public class BookController {
 
     private final BookService bookService;
+    private final ReviewService reviewService;
 
     // (GET) - Livro pelo ID.
     @Operation(summary = "Retorna o livro pelo id")
@@ -96,5 +101,28 @@ public class BookController {
         BookResponseDTO bookDTO = new BookResponseDTO(book);
         return ResponseEntity.ok(bookDTO);
 
+    }
+
+    // (PATCH) - ADICIONA UMA REVIEW AO LIVRO
+    @Operation(summary = "Adicionar uma review a um livro")
+    @PatchMapping("/{bookId}/reviews")
+    public ResponseEntity<ReviewResponseDTO> addReview(@PathVariable Long bookId,
+            @RequestBody @Valid ReviewRequestDTO data, @RequestParam Long userId) {
+        Review review = reviewService.createReview(data, bookId, userId);
+
+        ReviewResponseDTO response = ReviewResponseDTO.fromEntity(review);
+
+        return ResponseEntity.ok(response);
+
+    }
+
+    // (DELETE) - DELETA A SUA PRÓPRIA REVIEW DE UM LIVRO
+    @Operation(summary = "Deletar a sua própria review de um livro")
+    @DeleteMapping("/reviews/{reviewId}")
+    public ResponseEntity<Void> deleteOwnReview(@PathVariable Long reviewId) {
+
+        reviewService.deleteReview(reviewId);
+
+        return ResponseEntity.noContent().build();
     }
 }

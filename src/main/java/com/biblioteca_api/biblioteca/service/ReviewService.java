@@ -28,15 +28,15 @@ public class ReviewService {
 
     // CREATE A REVIEW
     @Transactional
-    public Review createReview(ReviewRequestDTO dto) {
-        if (reviewRepository.existsByUserIdAndBookId(dto.userId(), dto.bookId())) {
+    public Review createReview(ReviewRequestDTO dto, Long bookId, Long userId) {
+        if (reviewRepository.existsByUserIdAndBookId(userId, bookId)) {
             throw new ResponseStatusException(
                     HttpStatus.CONFLICT,
                     "Usuário já enviou uma avaliação para este livro.");
         }
 
-        Book book = bookService.getBookById(dto.bookId());
-        User user = userService.getUserById(dto.userId());
+        Book book = bookService.getBookById(bookId);
+        User user = userService.getUserById(userId);
 
         Review review = new Review();
 
@@ -58,10 +58,10 @@ public class ReviewService {
 
     // UPDATE A REVIEW
     @Transactional
-    public Review updateReview(Long id, ReviewRequestDTO dto) {
+    public Review updateReview(Long id, ReviewRequestDTO dto, Long bookId, Long userId) {
         Review review = getReviewById(id);
-        Book book = bookService.getBookById(dto.bookId());
-        User user = userService.getUserById(dto.userId());
+        Book book = bookService.getBookById(bookId);
+        User user = userService.getUserById(userId);
 
         review.setBook(book);
         review.setUser(user);

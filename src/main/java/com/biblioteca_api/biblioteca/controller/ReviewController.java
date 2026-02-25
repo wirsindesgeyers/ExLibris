@@ -18,7 +18,6 @@ public class ReviewController {
 
     ReviewService reviewService;
 
-    // (DELETE) - DELETA UMA REVIEW
     @Operation(summary = "Deletar a sua própria review de um livro")
     @DeleteMapping("/reviews/{reviewId}")
     public ResponseEntity<Void> deleteReview(@PathVariable Long reviewId) {

@@ -1,6 +1,7 @@
 package com.biblioteca_api.biblioteca.service;
 
 import com.biblioteca_api.biblioteca.dto.BookRequestDTO;
+import com.biblioteca_api.biblioteca.dto.BookResponseDTO;
 import com.biblioteca_api.biblioteca.entities.Author;
 import com.biblioteca_api.biblioteca.entities.Book;
 import com.biblioteca_api.biblioteca.infra.exceptions.BookAlreadyExistsException;
@@ -21,72 +22,89 @@ public class BookService {
     private final BookRepository bookRepository;
     private final AuthorService authorService;
 
-    // RETORNA O LIVRO COM O ID ESPECIFICADO
-    public Book getBookById(Long id) {
+    // RETRIEVES BOOK (ENTITY) BY ITS ID
+    protected Book findBookEntity(Long id) {
         return bookRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Livro não encontrado"));
     }
 
-    // RETORNA TODOS OS LIVROS
-    public List<Book> getAllBooks() {
-        return bookRepository.findAll();
+    // VALIDATES IF THE BOOK EXISTS
+    public void validateBookExists(Long id) {
+        if (!bookRepository.existsById(id)) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Livro não encontrado");
+        }
     }
 
-    // CRIA O LIVRO
-    @Transactional
-    public Book createBook(BookRequestDTO dto) {
+    // RETRIEVES A RESPONSE DTO OF THE BOOK
+    public BookResponseDTO getBookById(Long id) {
+        Book book = findBookEntity(id);
+        return BookResponseDTO.fromEntity(book);
+    }
 
+    // LISTS ALL BOOKS
+    public List<BookResponseDTO> getAllBooks() {
+        return bookRepository.findAll()
+                .stream()
+                .map(BookResponseDTO::fromEntity)
+                .toList();
+    }
+
+    // CREATES BOOKS
+    @Transactional
+    public BookResponseDTO createBook(BookRequestDTO dto) {
         if (bookRepository.existsByIsbn(dto.isbn())) {
             throw new BookAlreadyExistsException("Já existe um livro cadastrado com este ISBN.");
         }
 
-        Author author = authorService.getAuthorById(dto.authorId());
+        Author author = authorService.findAuthorEntity(dto.authorId());
 
         Book book = new Book();
         book.setTitle(dto.title());
         book.setIsbn(dto.isbn());
         book.setPrice(dto.price());
         book.setPublishedDate(dto.publishedDate());
-
         book.setAuthor(author);
 
-        return bookRepository.save(book);
+        Book savedBook = bookRepository.save(book);
+        return BookResponseDTO.fromEntity(savedBook);
     }
 
-    // DELETA O LIVRO PELO ID
+    // DELETES BOOK BY ITS ID
     @Transactional
     public void deleteBookById(Long id) {
-        Book book = getBookById(id);
+        Book book = findBookEntity(id);
         bookRepository.delete(book);
     }
 
-    // EDITA O LIVRO (PUT)
+    // UPDATE BOOK ENTIRELY
     @Transactional
-    public Book updateBook(Long id, BookRequestDTO dto) {
-        Book book = getBookById(id);
+    public BookResponseDTO updateBook(Long id, BookRequestDTO dto) {
+        Book book = findBookEntity(id);
+
         book.setTitle(dto.title());
         book.setIsbn(dto.isbn());
         book.setPrice(dto.price());
         book.setPublishedDate(dto.publishedDate());
 
+        // Verifies if author has changed to not repeat unnecessary searches
         if (book.getAuthor() == null || !book.getAuthor().getId().equals(dto.authorId())) {
-            Author newAuthor = authorService.getAuthorById(dto.authorId());
+            Author newAuthor = authorService.findAuthorEntity(dto.authorId());
             book.setAuthor(newAuthor);
         }
-        return bookRepository.save(book);
 
+        Book updatedBook = bookRepository.save(book);
+        return BookResponseDTO.fromEntity(updatedBook);
     }
 
-    // ALTERA AUTOR DO LIVRO (PATCH)
+    // Alters a books' author
     @Transactional
-    public Book alterAuthor(Long authorId, Long bookId) {
-        Book book = getBookById(bookId);
-
-        Author author = authorService.getAuthorById(authorId);
+    public BookResponseDTO alterAuthor(Long authorId, Long bookId) {
+        Book book = findBookEntity(bookId);
+        Author author = authorService.findAuthorEntity(authorId);
 
         book.setAuthor(author);
+        Book updatedBook = bookRepository.save(book);
 
-        return bookRepository.save(book);
+        return BookResponseDTO.fromEntity(updatedBook);
     }
-
 }

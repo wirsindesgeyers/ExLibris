@@ -1,4 +1,4 @@
-package com.biblioteca_api.biblioteca.service;
+package com.biblioteca_api.biblioteca.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

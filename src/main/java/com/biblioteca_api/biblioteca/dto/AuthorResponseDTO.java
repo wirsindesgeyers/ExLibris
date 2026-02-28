@@ -11,10 +11,10 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 public record AuthorResponseDTO(
 
-        @Schema(description = "Id do autor de livros", example = "2328")
+        @Schema(description = "Id do autor ", example = "2328")
         Long id,
 
-        @Schema(description = "Data de Nascimento do Autor de livros (yyyy/MM/dd)", example = "1874/05/29")
+        @Schema(description = "Data de Nascimento do Autor (yyyy/MM/dd)", example = "1874/05/29")
         LocalDate birthDate,
 
         @Schema(description = "Nome do Autor de livros", example = "Gilbert Keith Chesterton")

@@ -18,7 +18,7 @@ public class UserService {
 
     private final UserRepository userRepository;
 
-    protected void ValidateUserExists(Long id) {
+    protected void validateUserExists(Long id) {
         if (!userRepository.existsById(id)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuário não encontrado");
         }

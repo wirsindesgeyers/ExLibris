@@ -108,7 +108,7 @@ public class ReviewService {
 
     // RETRIEVES ALL REVIEWS FROM A SPECIFIC User
     public List<ReviewResponseDTO> listReviewsFromUser(Long userId) {
-        userService.ValidateUserExists(userId);
+        userService.validateUserExists(userId);
         return reviewRepository.findByUserId(userId)
                 .stream()
                 .map(ReviewResponseDTO::fromEntity)

@@ -3,6 +3,7 @@ package com.biblioteca_api.biblioteca.entities;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PastOrPresent;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -41,6 +42,7 @@ public class Book {
 
     @ManyToOne
     @JoinColumn(name = "author_id")
+    @NotNull
     private Author author;
 
     @OneToMany(mappedBy = "book")

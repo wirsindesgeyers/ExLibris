@@ -12,6 +12,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import com.biblioteca_api.biblioteca.dto.UserResponseDTO;
 import com.biblioteca_api.biblioteca.entities.User;
+import com.biblioteca_api.biblioteca.factories.UserFactory;
 import com.biblioteca_api.biblioteca.repository.UserRepository;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -35,12 +36,7 @@ class UserServiceTest {
 
     @BeforeEach
     void setUp() {
-        user = new User();
-        user.setId(1L);
-        user.setEmail("kauanmaiagomes@gmail.com");
-        user.setPassword("12345");
-        user.setName("kauan");
-
+        user = UserFactory.createValidUser();
     }
 
     // Testes pra validateUserExists

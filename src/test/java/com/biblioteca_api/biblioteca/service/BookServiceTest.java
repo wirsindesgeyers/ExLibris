@@ -4,6 +4,8 @@ import com.biblioteca_api.biblioteca.dto.BookRequestDTO;
 import com.biblioteca_api.biblioteca.dto.BookResponseDTO;
 import com.biblioteca_api.biblioteca.entities.Author;
 import com.biblioteca_api.biblioteca.entities.Book;
+import com.biblioteca_api.biblioteca.factories.AuthorFactory;
+import com.biblioteca_api.biblioteca.factories.BookFactory;
 import com.biblioteca_api.biblioteca.infra.exceptions.BookAlreadyExistsException;
 import com.biblioteca_api.biblioteca.repository.BookRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -44,19 +46,8 @@ class BookServiceTest {
 
     @BeforeEach
     void setUp() {
-        author = new Author();
-        author.setId(1L);
-        author.setName("J.R.R. Tolkien");
-
-        book = new Book();
-        book.setId(100L);
-        book.setTitle("O Senhor dos Anéis");
-        book.setIsbn("1234567890");
-        book.setPrice(new BigDecimal("150.0"));
-        book.setPublishedDate(LocalDate.of(1954, 7, 29));
-        book.setAuthor(author);
-        book.setAverageRating(4.8);
-
+        author = AuthorFactory.createValidAuthor();
+        book = BookFactory.createValidBook(author);
         requestDTO = new BookRequestDTO("O Hobbit", "0987654321", new BigDecimal("100.00"), LocalDate.of(1937, 9, 21),
                 1L);
     }

@@ -21,6 +21,7 @@ import org.springframework.web.server.ResponseStatusException;
 import com.biblioteca_api.biblioteca.dto.AuthorRequestDTO;
 import com.biblioteca_api.biblioteca.dto.AuthorResponseDTO;
 import com.biblioteca_api.biblioteca.entities.Author;
+import com.biblioteca_api.biblioteca.factories.AuthorFactory;
 import com.biblioteca_api.biblioteca.repository.AuthorRepository;
 
 @ExtendWith(MockitoExtension.class)
@@ -37,11 +38,7 @@ class AuthorServiceTest {
 
     @BeforeEach
     void setUp() {
-        author = new Author();
-        author.setId(1L);
-        author.setName("J.R.R. Tolkien");
-        author.setBirthdate(LocalDate.of(1892, 1, 3));
-
+        author = AuthorFactory.createValidAuthor();
         requestDTO = new AuthorRequestDTO("George R.R. Martin", LocalDate.of(1948, 9, 20));
     }
 

@@ -55,6 +55,18 @@ class BookServiceTest {
     // TESTES PARA findBookEntity e validateBookExists
 
     @Test
+    @DisplayName("Deve retornar a entidade Book quando o ID existir")
+    void findBookEntity_Success() {
+        when(bookRepository.findById(1L)).thenReturn(Optional.of(book));
+
+        Book result = bookService.findBookEntity(1L);
+
+        assertNotNull(result);
+        assertEquals(1L, result.getId());
+        assertEquals(book.getTitle(), result.getTitle());
+    }
+
+    @Test
     @DisplayName("Deve lançar ResponseStatusException 404 quando buscar entidade de livro inexistente")
     void findBookEntity_ThrowsNotFound() {
         when(bookRepository.findById(100L)).thenReturn(Optional.empty());
@@ -88,13 +100,24 @@ class BookServiceTest {
     @Test
     @DisplayName("Deve retornar BookResponseDTO com sucesso")
     void getBookById_Success() {
-        when(bookRepository.findById(100L)).thenReturn(Optional.of(book));
+        when(bookRepository.findById(1L)).thenReturn(Optional.of(book));
 
-        BookResponseDTO response = bookService.getBookById(100L);
+        BookResponseDTO response = bookService.getBookById(1L);
 
         assertNotNull(response);
-        assertEquals(book.getTitle(), response.title()); // Ajuste a chamada de acordo com seu DTO
-        verify(bookRepository, times(1)).findById(100L);
+        assertEquals(book.getTitle(), response.title());
+        verify(bookRepository, times(1)).findById(1L);
+    }
+
+    @Test
+    @DisplayName("Deve lançar ResponseStatusException 404 quando buscar livro inexistente pelo ID")
+    void getBookById_ThrowsNotFound() {
+        when(bookRepository.findById(99L)).thenReturn(Optional.empty());
+
+        ResponseStatusException exception = assertThrows(ResponseStatusException.class,
+                () -> bookService.getBookById(99L));
+
+        assertEquals(HttpStatus.NOT_FOUND, exception.getStatusCode());
     }
 
     @Test
@@ -146,11 +169,22 @@ class BookServiceTest {
     @Test
     @DisplayName("Deve deletar livro com sucesso")
     void deleteBookById_Success() {
-        when(bookRepository.findById(100L)).thenReturn(Optional.of(book));
+        when(bookRepository.findById(1L)).thenReturn(Optional.of(book));
 
-        bookService.deleteBookById(100L);
+        bookService.deleteBookById(1L);
 
         verify(bookRepository, times(1)).delete(book);
+    }
+
+    @Test
+    @DisplayName("Deve lançar ResponseStatusException 404 ao tentar deletar livro inexistente")
+    void deleteBookById_ThrowsNotFound() {
+        when(bookRepository.findById(99L)).thenReturn(Optional.empty());
+
+        assertThrows(ResponseStatusException.class,
+                () -> bookService.deleteBookById(99L));
+
+        verify(bookRepository, never()).delete(any());
     }
 
     // --- TESTES PARA updateBook ---
@@ -158,11 +192,11 @@ class BookServiceTest {
     @Test
     @DisplayName("Deve atualizar o livro com sucesso sem alterar o autor")
     void updateBook_Success_SameAuthor() {
-        when(bookRepository.findById(100L)).thenReturn(Optional.of(book));
+        when(bookRepository.findById(1L)).thenReturn(Optional.of(book));
         when(bookRepository.save(any(Book.class))).thenReturn(book);
 
         // requestDTO possui o mesmo authorId (1L) que o livro já possui
-        bookService.updateBook(100L, requestDTO);
+        bookService.updateBook(1L, requestDTO);
 
         verify(authorService, never()).findAuthorEntity(anyLong());
         verify(bookRepository, times(1)).save(book);
@@ -176,14 +210,40 @@ class BookServiceTest {
         Author newAuthor = new Author();
         newAuthor.setId(2L);
 
-        when(bookRepository.findById(100L)).thenReturn(Optional.of(book));
+        when(bookRepository.findById(1L)).thenReturn(Optional.of(book));
         when(authorService.findAuthorEntity(2L)).thenReturn(newAuthor);
         when(bookRepository.save(any(Book.class))).thenReturn(book);
 
-        bookService.updateBook(100L, updateRequest);
+        bookService.updateBook(1L, updateRequest);
 
         verify(authorService, times(1)).findAuthorEntity(2L);
         assertEquals(2L, book.getAuthor().getId());
+    }
+
+    @Test
+    @DisplayName("Deve buscar autor quando book.getAuthor() for null no update")
+    void updateBook_Success_NullAuthorOnBook() {
+        book.setAuthor(null); // simula livro sem autor associado
+
+        when(bookRepository.findById(1L)).thenReturn(Optional.of(book));
+        when(authorService.findAuthorEntity(1L)).thenReturn(author);
+        when(bookRepository.save(any(Book.class))).thenReturn(book);
+
+        bookService.updateBook(1L, requestDTO); // requestDTO tem authorId=1L
+
+        verify(authorService, times(1)).findAuthorEntity(1L);
+        assertEquals(1L, book.getAuthor().getId());
+    }
+
+    @Test
+    @DisplayName("Deve lançar ResponseStatusException 404 ao tentar atualizar livro inexistente")
+    void updateBook_ThrowsNotFound() {
+        when(bookRepository.findById(99L)).thenReturn(Optional.empty());
+
+        assertThrows(ResponseStatusException.class,
+                () -> bookService.updateBook(99L, requestDTO));
+
+        verify(bookRepository, never()).save(any());
     }
 
     // --- TESTES PARA alterAuthor ---
@@ -194,14 +254,38 @@ class BookServiceTest {
         Author newAuthor = new Author();
         newAuthor.setId(2L);
 
-        when(bookRepository.findById(100L)).thenReturn(Optional.of(book));
+        when(bookRepository.findById(1L)).thenReturn(Optional.of(book));
         when(authorService.findAuthorEntity(2L)).thenReturn(newAuthor);
         when(bookRepository.save(any(Book.class))).thenReturn(book);
 
-        bookService.alterAuthor(2L, 100L);
+        bookService.alterAuthor(2L, 1L);
 
         assertEquals(2L, book.getAuthor().getId());
         verify(bookRepository, times(1)).save(book);
+    }
+
+    @Test
+    @DisplayName("Deve lançar ResponseStatusException 404 ao alterar autor de livro inexistente")
+    void alterAuthor_ThrowsNotFound_BookNotFound() {
+        when(bookRepository.findById(99L)).thenReturn(Optional.empty());
+
+        assertThrows(ResponseStatusException.class,
+                () -> bookService.alterAuthor(2L, 99L));
+
+        verify(bookRepository, never()).save(any());
+    }
+
+    @Test
+    @DisplayName("Deve propagar exceção quando autor não existir ao alterar autor do livro")
+    void alterAuthor_ThrowsNotFound_AuthorNotFound() {
+        when(bookRepository.findById(1L)).thenReturn(Optional.of(book));
+        when(authorService.findAuthorEntity(99L))
+                .thenThrow(new ResponseStatusException(HttpStatus.NOT_FOUND, "Autor não encontrado"));
+
+        assertThrows(ResponseStatusException.class,
+                () -> bookService.alterAuthor(99L, 1L));
+
+        verify(bookRepository, never()).save(any());
     }
 
     // --- TESTES PARA updateAverageRating ---
@@ -209,9 +293,9 @@ class BookServiceTest {
     @Test
     @DisplayName("Deve atualizar o rating com o valor fornecido")
     void updateAverageRating_WithValidValue() {
-        when(bookRepository.findById(100L)).thenReturn(Optional.of(book));
+        when(bookRepository.findById(1L)).thenReturn(Optional.of(book));
 
-        bookService.updateAverageRating(100L, 4.5);
+        bookService.updateAverageRating(1L, 4.5);
 
         assertEquals(4.5, book.getAverageRating());
         verify(bookRepository, times(1)).save(book);
@@ -220,11 +304,22 @@ class BookServiceTest {
     @Test
     @DisplayName("Deve atualizar o rating para 0.0 quando o valor fornecido for null")
     void updateAverageRating_WithNullValue() {
-        when(bookRepository.findById(100L)).thenReturn(Optional.of(book));
+        when(bookRepository.findById(1L)).thenReturn(Optional.of(book));
 
-        bookService.updateAverageRating(100L, null);
+        bookService.updateAverageRating(1L, null);
 
         assertEquals(0.0, book.getAverageRating());
         verify(bookRepository, times(1)).save(book);
+    }
+
+    @Test
+    @DisplayName("Deve lançar ResponseStatusException 404 ao atualizar rating de livro inexistente")
+    void updateAverageRating_ThrowsNotFound() {
+        when(bookRepository.findById(99L)).thenReturn(Optional.empty());
+
+        assertThrows(ResponseStatusException.class,
+                () -> bookService.updateAverageRating(99L, 4.0));
+
+        verify(bookRepository, never()).save(any());
     }
 }

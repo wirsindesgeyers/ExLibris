@@ -1,5 +1,6 @@
 package com.biblioteca_api.biblioteca.dto.auth;
 
+import com.biblioteca_api.biblioteca.entities.User;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 public record RegisterResponseDTO(
@@ -14,4 +15,18 @@ public record RegisterResponseDTO(
 
         @Schema(description = "Mensagem de confirmação", example = "Usuário registrado com sucesso!")
         String message) {
+
+
+    public RegisterResponseDTO(User user){
+        this(
+                user.getId(),
+                user.getEmail(),
+                user.getRole().name(),
+                "Usuário cadastrado com sucesso!"
+        );
+    }
+
+    public static RegisterResponseDTO fromEntity(User user) {
+        return new RegisterResponseDTO(user);
+        }
 }

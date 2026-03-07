@@ -11,4 +11,5 @@ public record LoginResponseDTO(
 
         @Schema(description = "Papel do usuário no sistema", example = "READER")
         String role) {
+
 }

@@ -1,0 +1,24 @@
+meta {
+  name: Admin Register User
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{baseUrl}}/api/auth/admin/register-user
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+body:json {
+  {
+    "name": "Novo Bibliotecário",
+    "email": "librarian@email.com",
+    "password": "teste123",
+    "role": "LIBRARIAN"
+  }
+}

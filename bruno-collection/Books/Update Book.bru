@@ -1,0 +1,29 @@
+meta {
+  name: Update Book
+  type: http
+  seq: 4
+}
+
+put {
+  url: {{baseUrl}}/api/books/:id
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+params:path {
+  id: 1
+}
+
+body:json {
+  {
+    "title": "O Hobbit - Edição Revisada",
+    "isbn": "9788595084742",
+    "price": 49.90,
+    "publishedDate": "1937-09-21",
+    "authorId": 1
+  }
+}

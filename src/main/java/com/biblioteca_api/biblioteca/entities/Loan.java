@@ -53,4 +53,24 @@ public class Loan {
     @Column(name = "return_date")
     private LocalDate returnDate;
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        // Se não for a mesma classe ou for um proxy do Hibernate, retorna false
+        if (!(o instanceof Loan))
+            return false;
+        Loan other = (Loan) o;
+        // Se ambos os IDs forem null (não salvos), eles não são iguais (são instâncias
+        // diferentes na RAM).
+        // Se tiverem ID, comparamos o ID.
+        return id != null && id.equals(other.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        // Retorna um valor constante (ex: o nome da classe) para que o hash nunca mude
+        // entre o estado transitório (id=null) e o estado gerenciado (id=1).
+        return getClass().hashCode();
+    }
 }

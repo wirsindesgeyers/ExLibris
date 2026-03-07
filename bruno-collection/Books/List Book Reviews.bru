@@ -1,0 +1,19 @@
+meta {
+  name: List Book Reviews
+  type: http
+  seq: 8
+}
+
+get {
+  url: {{baseUrl}}/api/books/:bookId/reviews
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+params:path {
+  bookId: 1
+}

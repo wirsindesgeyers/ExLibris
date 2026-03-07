@@ -1,13 +1,8 @@
 package com.biblioteca_api.biblioteca.service;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.*;
-
-import java.util.Optional;
-
+import com.biblioteca_api.biblioteca.entities.User;
+import com.biblioteca_api.biblioteca.factories.UserFactory;
+import com.biblioteca_api.biblioteca.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -18,25 +13,24 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
-import com.biblioteca_api.biblioteca.entities.User;
-import com.biblioteca_api.biblioteca.factories.UserFactory;
-import com.biblioteca_api.biblioteca.repository.UserRepository;
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class AuthorizationServiceTest {
 
     @Mock
-    private UserRepository userRepository;
+    UserRepository userRepository;
 
     @InjectMocks
-    private AuthorizationService authorizationService;
+    AuthorizationService authorizationService;
 
-    private User user;
-
-    // Testes para loadUserByUsername
+    User user;
 
     @BeforeEach
-    void setUp() {
+    void setUp(){
         user = UserFactory.createValidUser();
     }
 

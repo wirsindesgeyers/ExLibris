@@ -1,0 +1,27 @@
+meta {
+  name: Add Review to Book
+  type: http
+  seq: 7
+}
+
+post {
+  url: {{baseUrl}}/api/books/:bookId/reviews
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+params:path {
+  bookId: 1
+}
+
+body:json {
+  {
+    "rating": 5,
+    "title": "Excelente leitura!",
+    "description": "O livro possui uma narrativa envolvente e personagens bem construídos."
+  }
+}

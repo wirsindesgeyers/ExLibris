@@ -12,13 +12,12 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
+import org.springframework.web.bind.annotation.RequestBody;
 import com.biblioteca_api.biblioteca.dto.auth.LoginRequestDTO;
 import com.biblioteca_api.biblioteca.dto.auth.LoginResponseDTO;
 import com.biblioteca_api.biblioteca.dto.auth.RegisterResponseDTO;
 
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import jakarta.validation.Valid;
 
 @RestController
@@ -47,7 +46,7 @@ public class AuthenticationController {
         }
 
         UserRole roleFromDTO = UserRole.valueOf(data.role().toUpperCase());
-        var response = authService.register(data,roleFromDTO);
+        var response = authService.register(data, roleFromDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
@@ -59,7 +58,6 @@ public class AuthenticationController {
 
         return ResponseEntity.status(HttpStatus.OK).body(response);
 
-  }
-
+    }
 
 }

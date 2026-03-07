@@ -1,0 +1,22 @@
+meta {
+  name: Create Author
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{baseUrl}}/api/author
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+body:json {
+  {
+    "name": "Gilbert Keith Chesterton",
+    "birthDate": "1874-05-29"
+  }
+}

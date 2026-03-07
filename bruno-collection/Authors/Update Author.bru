@@ -1,0 +1,26 @@
+meta {
+  name: Update Author
+  type: http
+  seq: 4
+}
+
+put {
+  url: {{baseUrl}}/api/author/:id
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+params:path {
+  id: 1
+}
+
+body:json {
+  {
+    "name": "G. K. Chesterton",
+    "birthDate": "1874-05-29"
+  }
+}

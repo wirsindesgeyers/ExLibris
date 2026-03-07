@@ -1,0 +1,15 @@
+meta {
+  name: Get All Authors
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/api/author
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}

@@ -1,0 +1,25 @@
+meta {
+  name: Create Book
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{baseUrl}}/api/books
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+body:json {
+  {
+    "title": "O Hobbit",
+    "isbn": "9788595084742",
+    "price": 39.90,
+    "publishedDate": "1937-09-21",
+    "authorId": 1
+  }
+}

@@ -76,7 +76,7 @@ public class BookController {
     public ResponseEntity<ReviewResponseDTO> addReview(
             @PathVariable Long bookId,
             @RequestBody @Valid ReviewRequestDTO data,
-            @RequestParam Long userId) {
+            @RequestBody Long userId) {
 
         return ResponseEntity.ok(reviewService.createReview(data, bookId, userId));
     }

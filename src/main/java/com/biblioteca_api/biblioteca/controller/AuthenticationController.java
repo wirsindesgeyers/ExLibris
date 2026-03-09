@@ -7,8 +7,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -26,11 +24,12 @@ import jakarta.validation.Valid;
 public class AuthenticationController {
 
     private final AuthService authService;
-    private final AuthenticationManager authenticationManager;
 
     @Operation(summary = "Registra um usuário (sempre será READER)")
     @PostMapping("/register")
-    public ResponseEntity<RegisterResponseDTO> register(@RequestBody @Valid RegisterRequestDTO data) {
+    public ResponseEntity<RegisterResponseDTO> register(@RequestBody
+    @Valid
+    RegisterRequestDTO data) {
 
         var response = authService.register(data, UserRole.READER);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
@@ -39,7 +38,9 @@ public class AuthenticationController {
     @Operation(summary = "Admin registra novos usuários escolhendo a Role")
     @PostMapping("/admin/register-user")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<RegisterResponseDTO> registerByAdmin(@RequestBody @Valid RegisterRequestDTO data) {
+    public ResponseEntity<RegisterResponseDTO> registerByAdmin(@RequestBody
+    @Valid
+    RegisterRequestDTO data) {
 
         if (data.role() == null || data.role().isBlank()) {
             throw new RuntimeException("Admin, você precisa informar a Role do novo usuário!");
@@ -52,7 +53,9 @@ public class AuthenticationController {
 
     @PostMapping("/login")
     @Operation(summary = "Loga um usuário")
-    public ResponseEntity<LoginResponseDTO> login(@RequestBody @Valid LoginRequestDTO data) {
+    public ResponseEntity<LoginResponseDTO> login(@RequestBody
+    @Valid
+    LoginRequestDTO data) {
 
         LoginResponseDTO response = authService.login(data);
 

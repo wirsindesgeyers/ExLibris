@@ -75,9 +75,10 @@ public class ReviewService {
     @Transactional
     public void deleteReview(Long id) {
         Review review = findReviewEntity(id);
+        Long bookId = review.getBook().getId();
         reviewRepository.delete(review);
 
-        recalculateBookRating(id);
+        recalculateBookRating(bookId);
     }
 
     // UPDATE A REVIEW

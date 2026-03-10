@@ -26,7 +26,7 @@ public class ReviewService {
 
     // RETRIEVES TRUE IF USER IS THE REVIEW OWNER, OTHERWISE IT RETURNS FALSE
     public Boolean isReviewOwner(Long reviewId, String email) {
-        return reviewRepository.existsByReviewIdAndUserEmail(reviewId, email);
+        return reviewRepository.existsByIdAndUserEmail(reviewId, email);
     }
 
     // RECALCULATES THE BOOK RATING

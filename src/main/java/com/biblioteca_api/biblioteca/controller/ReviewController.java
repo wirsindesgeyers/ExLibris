@@ -19,7 +19,7 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/api/reviews")
 public class ReviewController {
 
-    ReviewService reviewService;
+    private final ReviewService reviewService;
 
     @PreAuthorize("hasRole('ADMIN') or @reviewService.isReviewOwner(#id, principal.username)")
     @Operation(summary = "Deletar a sua própria review de um livro")

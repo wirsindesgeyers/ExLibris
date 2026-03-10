@@ -61,4 +61,18 @@ public class UserController {
 
         return ResponseEntity.noContent().build();
     }
+
+    @PutMapping("/{id}/reset-password")
+    @Operation(summary = "Muda a senha de qualquer usuário.")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Void> updateUserPassword(@PathVariable
+    Long id, @RequestBody
+    String newPassword) {
+
+        userService.adminUpdatePassword(id, newPassword);
+
+        return ResponseEntity.noContent().build();
+
+    }
+
 }

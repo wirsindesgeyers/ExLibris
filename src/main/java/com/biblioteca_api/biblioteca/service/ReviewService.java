@@ -24,6 +24,11 @@ public class ReviewService {
     private final BookService bookService;
     private final UserService userService;
 
+    // RETRIEVES TRUE IF USER IS THE REVIEW OWNER, OTHERWISE IT RETURNS FALSE
+    public Boolean isReviewOwner(Long reviewId, String email) {
+        return reviewRepository.existsByIdAndUserEmail(reviewId, email);
+    }
+
     // RECALCULATES THE BOOK RATING
     private void recalculateBookRating(Long bookId) {
         Double average = reviewRepository.getAverageRatingByBookId(bookId);
@@ -44,15 +49,14 @@ public class ReviewService {
 
     // CREATE A REVIEW
     @Transactional
-    public ReviewResponseDTO createReview(ReviewRequestDTO dto, Long bookId, Long userId) {
-        if (reviewRepository.existsByUserIdAndBookId(userId, bookId)) {
+    public ReviewResponseDTO createReview(ReviewRequestDTO dto, Long bookId, User user) {
+        if (reviewRepository.existsByUserAndBookId(user, bookId)) {
             throw new ResponseStatusException(
                     HttpStatus.CONFLICT,
                     "Usuário já enviou uma avaliação para este livro.");
         }
 
         Book book = bookService.findBookEntity(bookId);
-        User user = userService.findUserEntity(userId);
 
         Review review = new Review();
         review.setBook(book);

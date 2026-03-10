@@ -4,6 +4,8 @@ import java.net.URI;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -15,6 +17,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
+@EnableMethodSecurity
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/author")
@@ -22,9 +25,12 @@ public class AuthorController {
 
     private final AuthorService authorService;
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     @Operation(summary = "Cria um autor")
-    public ResponseEntity<AuthorResponseDTO> createAuthor(@RequestBody @Valid AuthorRequestDTO data) {
+    public ResponseEntity<AuthorResponseDTO> createAuthor(@RequestBody
+    @Valid
+    AuthorRequestDTO data) {
         AuthorResponseDTO response = authorService.createAuthor(data);
 
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
@@ -37,13 +43,16 @@ public class AuthorController {
 
     @Operation(summary = "Busca os dados de um autor")
     @GetMapping("/{id}")
-    public ResponseEntity<AuthorResponseDTO> getAuthor(@PathVariable Long id) {
+    public ResponseEntity<AuthorResponseDTO> getAuthor(@PathVariable
+    Long id) {
         return ResponseEntity.ok(authorService.getAuthorById(id));
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Apaga um autor")
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteAuthor(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteAuthor(@PathVariable
+    Long id) {
         authorService.deleteAuthorById(id);
         return ResponseEntity.noContent().build();
     }
@@ -54,11 +63,15 @@ public class AuthorController {
         return ResponseEntity.ok(authorService.getAllAuthors());
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Editar um autor por completo")
     @PutMapping("/{id}")
     public ResponseEntity<AuthorResponseDTO> editAuthor(
-            @PathVariable Long id,
-            @RequestBody @Valid AuthorRequestDTO data) {
+            @PathVariable
+            Long id,
+            @RequestBody
+            @Valid
+            AuthorRequestDTO data) {
 
         return ResponseEntity.ok(authorService.editAuthor(data, id));
     }

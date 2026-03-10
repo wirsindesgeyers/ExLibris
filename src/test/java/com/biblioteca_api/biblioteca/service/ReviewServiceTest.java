@@ -108,15 +108,14 @@ class ReviewServiceTest {
     @Test
     void createReviewSuccess() {
 
-        when(reviewRepository.existsByUserIdAndBookId(user.getId(), book.getId())).thenReturn(false);
+        when(reviewRepository.existsByUserAndBookId(user, book.getId())).thenReturn(false);
         when(bookService.findBookEntity(book.getId())).thenReturn(book);
-        when(userService.findUserEntity(user.getId())).thenReturn(user);
 
         when(reviewRepository.save(any(Review.class))).thenReturn(review);
 
         when(reviewRepository.getAverageRatingByBookId(book.getId())).thenReturn(4.8);
 
-        ReviewResponseDTO response = reviewService.createReview(requestDTO, book.getId(), user.getId());
+        ReviewResponseDTO response = reviewService.createReview(requestDTO, book.getId(), user);
 
         assertNotNull(response);
         assertEquals(review.getId(), response.reviewId());
@@ -127,9 +126,8 @@ class ReviewServiceTest {
         assertEquals(user.getName(), response.userName());
         assertEquals(book.getTitle(), response.bookTitle());
 
-        verify(reviewRepository, times(1)).existsByUserIdAndBookId(user.getId(), book.getId());
+        verify(reviewRepository, times(1)).existsByUserAndBookId(user, book.getId());
         verify(bookService, times(1)).findBookEntity(book.getId());
-        verify(userService, times(1)).findUserEntity(user.getId());
         verify(reviewRepository, times(1)).save(any(Review.class));
 
         verify(reviewRepository, times(1)).getAverageRatingByBookId(book.getId());
@@ -139,16 +137,16 @@ class ReviewServiceTest {
     @DisplayName("Deve lançar ResponseStatusException (409) quando tentar criar uma review pra um livro que o usuário já fez review.")
     @Test
     void createReviewConflict() {
-        when(reviewRepository.existsByUserIdAndBookId(user.getId(), book.getId())).thenReturn(true);
+        when(reviewRepository.existsByUserAndBookId(user, book.getId())).thenReturn(true);
 
         ResponseStatusException exception = assertThrows(ResponseStatusException.class, () -> {
-            reviewService.createReview(requestDTO, 1L, 1L);
+            reviewService.createReview(requestDTO, 1L, user);
         });
 
         assertEquals(HttpStatus.CONFLICT, exception.getStatusCode());
         assertTrue(exception.getMessage().contains("Usuário já enviou uma avaliação para este livro."));
 
-        verify(reviewRepository, times(1)).existsByUserIdAndBookId(user.getId(), book.getId());
+        verify(reviewRepository, times(1)).existsByUserAndBookId(user, book.getId());
 
         verify(bookService, never()).findBookEntity(anyLong());
         verify(userService, never()).findUserEntity(anyLong());

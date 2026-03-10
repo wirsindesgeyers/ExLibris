@@ -5,17 +5,23 @@ import java.util.List;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.biblioteca_api.biblioteca.dto.ReviewResponseDTO;
+import com.biblioteca_api.biblioteca.dto.UpdatePasswordDTO;
 import com.biblioteca_api.biblioteca.dto.UserResponseDTO;
+import com.biblioteca_api.biblioteca.entities.User;
 import com.biblioteca_api.biblioteca.service.ReviewService;
 import com.biblioteca_api.biblioteca.service.UserService;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @EnableMethodSecurity
@@ -43,6 +49,30 @@ public class UserController {
         List<UserResponseDTO> response = userService.getAllUsers();
 
         return ResponseEntity.ok(response);
+    }
+
+    @PutMapping("/me/password")
+    @Operation(summary = "Muda a senha do próprio usuário")
+    public ResponseEntity<Void> updateOwnPassword(@RequestBody
+    @Valid
+    UpdatePasswordDTO dto, @AuthenticationPrincipal
+    User loggedUser) {
+        userService.updatePassword(loggedUser, dto);
+
+        return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("/{id}/reset-password")
+    @Operation(summary = "Muda a senha de qualquer usuário.")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Void> updateUserPassword(@PathVariable
+    Long id, @RequestBody
+    String newPassword) {
+
+        userService.adminUpdatePassword(id, newPassword);
+
+        return ResponseEntity.noContent().build();
+
     }
 
 }

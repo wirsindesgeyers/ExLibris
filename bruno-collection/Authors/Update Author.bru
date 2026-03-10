@@ -5,17 +5,17 @@ meta {
 }
 
 put {
-  url: {{baseUrl}}/api/author/:id
+  url: {{baseUrl}}/api/authors/:id
   body: json
   auth: bearer
 }
 
-auth:bearer {
-  token: {{token}}
-}
-
 params:path {
   id: 1
+}
+
+auth:bearer {
+  token: {{token}}
 }
 
 body:json {

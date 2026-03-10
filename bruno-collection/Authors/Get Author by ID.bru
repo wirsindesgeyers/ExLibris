@@ -5,15 +5,15 @@ meta {
 }
 
 get {
-  url: {{baseUrl}}/api/author/:id
+  url: {{baseUrl}}/api/authors/:id
   body: none
   auth: bearer
 }
 
-auth:bearer {
-  token: {{token}}
-}
-
 params:path {
   id: 1
+}
+
+auth:bearer {
+  token: {{token}}
 }

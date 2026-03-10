@@ -44,15 +44,14 @@ public class ReviewService {
 
     // CREATE A REVIEW
     @Transactional
-    public ReviewResponseDTO createReview(ReviewRequestDTO dto, Long bookId, Long userId) {
-        if (reviewRepository.existsByUserIdAndBookId(userId, bookId)) {
+    public ReviewResponseDTO createReview(ReviewRequestDTO dto, Long bookId, User user) {
+        if (reviewRepository.existsByUserAndBookId(user, bookId)) {
             throw new ResponseStatusException(
                     HttpStatus.CONFLICT,
                     "Usuário já enviou uma avaliação para este livro.");
         }
 
         Book book = bookService.findBookEntity(bookId);
-        User user = userService.findUserEntity(userId);
 
         Review review = new Review();
         review.setBook(book);

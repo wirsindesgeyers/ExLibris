@@ -24,6 +24,11 @@ public class ReviewService {
     private final BookService bookService;
     private final UserService userService;
 
+    // RETRIEVES TRUE IF USER IS THE REVIEW OWNER, OTHERWISE IT RETURNS FALSE
+    public Boolean isReviewOwner(Long reviewId, String email) {
+        return reviewRepository.existsByReviewIdAndUserEmail(reviewId, email);
+    }
+
     // RECALCULATES THE BOOK RATING
     private void recalculateBookRating(Long bookId) {
         Double average = reviewRepository.getAverageRatingByBookId(bookId);

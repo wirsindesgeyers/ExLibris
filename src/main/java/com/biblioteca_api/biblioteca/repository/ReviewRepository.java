@@ -12,6 +12,8 @@ import com.biblioteca_api.biblioteca.entities.User;
 public interface ReviewRepository extends JpaRepository<Review, Long> {
     boolean existsByUserAndBookId(User user, Long bookId);
 
+    boolean existsByReviewIdAndUserEmail(Long reviewId, String userEmail);
+
     List<Review> findByBookId(Long bookId);
 
     List<Review> findByUserId(Long userId);

@@ -10,7 +10,8 @@ import java.time.Instant;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler({ BookAlreadyExistsException.class, UserAlreadyExistsException.class })
+    @ExceptionHandler({ BookAlreadyExistsException.class, UserAlreadyExistsException.class,
+            PasswordAlreadyExistsException.class })
     public ProblemDetail handleConflictExceptions(RuntimeException e) {
 
         ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(

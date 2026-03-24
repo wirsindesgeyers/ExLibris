@@ -1,0 +1,30 @@
+services:
+  exlibris-db:
+    image: postgres:15-alpine
+    restart: always
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: exlibris
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  exlibris-api:
+    build: .
+    image: exlibris-api:latest
+    depends_on:
+      - exlibris-db
+    ports:
+      - "${SERVER_PORT}:${SERVER_PORT}"
+    restart: always
+    environment:
+      SECRET: ${SECRET}
+      SERVER_PORT: ${SERVER_PORT}
+      DB_URL: ${DB_URL}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+
+volumes:
+  postgres_data:
